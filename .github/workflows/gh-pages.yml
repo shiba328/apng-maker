@@ -1,0 +1,38 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # main ブランチが更新されたときに実行
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. リポジトリをクローン
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Node.js のセットアップ
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.2.0 # プロジェクトの Node.js バージョンに合わせる
+          cache: 'npm'
+
+      # 3. 依存関係のインストール
+      - name: Install dependencies
+        run: npm install
+
+      # 4. アプリのビルド
+      - name: Build project
+        run: npm run build
+
+      # 5. GitHub Pages にデプロイ
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist # Vite のビルド出力先
