@@ -3,7 +3,7 @@
 interface Props {
 }
 interface Emits {
-  (e: 'update', v: string): void;
+  (e: 'onChange', v: Event): void;
 }
 
 const props = defineProps<Props>();
@@ -12,7 +12,19 @@ const emits = defineEmits<Emits>();
 
 <template>
   <div class="droparea">
-    image to drop
+    <div>
+
+      image to drop
+    </div>
+    <div>
+      <input
+        id="select"
+        accept="image/*"
+        multiple
+        type="file"
+        @change="(e) => $emit('onChange', e)"
+      >
+    </div>
   </div>
 </template>
 
@@ -22,5 +34,7 @@ const emits = defineEmits<Emits>();
   justify-content: center;
   align-items: center;
   z-index: -1;
+  height: 100%;
+  width: 100%;
 }
 </style>

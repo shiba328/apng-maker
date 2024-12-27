@@ -3,7 +3,7 @@ import { useActiveStore, useFilesStore } from '@/stores/Default';
 const { files } = useFilesStore();
 
 const activeStore = useActiveStore();
-import useCanvas from '@/assets/canvas';
+import useCanvas from '@/composables/canvas';
 const { onClickThumbnail } = useCanvas();
 
 </script>

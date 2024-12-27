@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useDrop } from '@/assets/drop';
-import { onKeyArrow } from '@/assets/keyEvent';
+import { useDrop } from '@/composables/drop';
+import { onKeyArrow } from '@/composables/keyEvent';
 const { onDrop } = useDrop();
 import { useFilesStore } from '@/stores/Default';
 const { files } = useFilesStore();
@@ -11,7 +11,6 @@ import GHeader from '@/components/GHeader.vue';
 
 // keyのハンドラ
 const handleKeyArrow = (event: KeyboardEvent) => {
-  console.log(event.key);
   const directionMap: Record<string, 'prev' | 'next'> = {
     ArrowDown: 'next',
     ArrowLeft: 'prev',
@@ -44,6 +43,7 @@ const handleKeyArrow = (event: KeyboardEvent) => {
       />
       <DropArea
         v-if="files.length === 0"
+        @onChange="onDrop(e)"
       />
     </main>
   </div>
