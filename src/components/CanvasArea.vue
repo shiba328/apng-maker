@@ -8,7 +8,7 @@ import { computed, ref } from 'vue';
 
 const currentSlide = ref(0);
 
-const slideTo = (nextSlide) => (currentSlide.value = nextSlide);
+const slideTo = (nextSlide: number) => (currentSlide.value = nextSlide);
 
 const galleryConfig = {
   itemsToShow: 1,
