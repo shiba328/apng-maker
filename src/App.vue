@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useDrop } from '@/composables/drop';
 import { onKeyArrow } from '@/composables/keyEvent';
-const { onDrop } = useDrop();
+const { onDrop, onChange } = useDrop();
 import { useFilesStore } from '@/stores/Default';
 const { files } = useFilesStore();
 
@@ -29,6 +29,18 @@ const handleKeyArrow = (event: KeyboardEvent) => {
 <template>
   <div>
     <GHeader />
+    <div>
+      <div>
+        画像追加
+        <input
+          id="select"
+          accept="image/*"
+          multiple
+          type="file"
+          @change="(e) => onChange(e)"
+        >
+      </div>
+    </div>
     <main
       class="main"
       tabindex="0"
@@ -43,7 +55,7 @@ const handleKeyArrow = (event: KeyboardEvent) => {
       />
       <DropArea
         v-if="files.length === 0"
-        @onChange="onDrop(e)"
+        @onChange="(e) => onChange(e)"
       />
     </main>
   </div>

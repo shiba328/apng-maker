@@ -13,17 +13,18 @@ const emits = defineEmits<Emits>();
 <template>
   <div class="droparea">
     <div>
-
-      image to drop
-    </div>
-    <div>
-      <input
-        id="select"
-        accept="image/*"
-        multiple
-        type="file"
-        @change="(e) => $emit('onChange', e)"
-      >
+      <div>
+        image to drop
+      </div>
+      <div>
+        <input
+          id="select"
+          accept="image/*"
+          multiple
+          type="file"
+          @change="(e) => $emit('onChange', e)"
+        >
+      </div>
     </div>
   </div>
 </template>
