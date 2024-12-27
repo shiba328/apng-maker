@@ -1,68 +1,65 @@
 <script setup lang="ts">
-import { useFilesStore } from "@/stores/Default";
+import { useActiveStore, useFilesStore } from '@/stores/Default';
 const { files } = useFilesStore();
 
-import 'vue3-carousel/dist/carousel.css';
-import { Carousel, Slide } from 'vue3-carousel';
-import { computed, ref } from 'vue';
+const activeStore = useActiveStore();
+import useCanvas from '@/assets/canvas';
+const { onClickThumbnail } = useCanvas();
 
-const currentSlide = ref(0);
-
-const slideTo = (nextSlide: number) => (currentSlide.value = nextSlide);
-
-const galleryConfig = {
-  itemsToShow: 1,
-  wrapAround: true,
-  transition: 0,
-  slideEffect: 'fade',
-  mouseDrag: false,
-  touchDrag: false,
-};
-
-const thumbnailsConfig = {
-  itemsToShow: 10,
-  transition: 0,
-  gap: 10,
-};
-
-const images = ref([{}])
-
-computed(() => {
-  images.value = files.map((url, i) => {
-  return { id: i + 1, url }
-})
-})
- 
-
-interface Props {
-}
-interface Emits {
-  (e: 'update', v: string): void;
-}
-
-const props = defineProps<Props>();
-const emits = defineEmits<Emits>();
 </script>
-<template>
-  <Carousel id="gallery" v-bind="galleryConfig" v-model="currentSlide">
-    <Slide v-for="file, i in files" :key="i">
-      <div class="carousel__item">
-        <img :src="file" alt="Gallery Image" class="gallery-image" />
-      </div>
-    </Slide>
-  </Carousel>
 
-  <Carousel id="thumbnails" v-bind="thumbnailsConfig" v-model="currentSlide">
-    <Slide v-for="file, i in files" :key="i">
-      <div class="carousel__item" @click="slideTo(i)">
-        <img :src="file" alt="Thumbnail Image" class="thumbnail-image" />
+<template>
+  <div class="canvas">
+    <div class="wrap">
+      <div class="Thumbnail">
+        <div
+          v-for="item, i in files"
+          :key="i"
+          class="item"
+          :class="{ active: i == activeStore.active }"
+          @click="() => onClickThumbnail(i)"
+        >
+          <img :src="item">
+        </div>
       </div>
-    </Slide>
-  </Carousel>
+    </div>
+    <div  class="wrap">
+      <div class="Main">
+        <div class="item">
+          <img :src="files[activeStore.active]">
+        </div>
+      </div>
+    </div>
+  </div>
+
 </template>
 
 <style lang="scss" scoped>
-.thumbnail-image {
+.canvas {
   width: 100%;
+  max-height: var(--canvas-h);
+
+  display: grid;
+  grid-template-columns: 100px auto;
+}
+.Main {
+  .item {
+    height: var(--canvas-h);
+  }
+}
+
+.Thumbnail {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: scroll;
+  height: var(--canvas-h);
+  .item {
+  border: 1px solid transparent;
+  &.active {
+    opacity: 0.5;
+    border: 1px solid #000;
+  }
+}
 }
 </style>
