@@ -1,10 +1,31 @@
 <script setup lang="ts">
+interface Emits {
+  (e: 'remove', v: number): void;
+}
+
+const emits = defineEmits<Emits>();
+import ContextMenu from 'primevue/contextmenu';
+import {ref } from 'vue';
+
 import { useActiveStore, useFilesStore } from '@/stores/Default';
-const { files } = useFilesStore();
+const filesStore = useFilesStore();
 
 const activeStore = useActiveStore();
 import useCanvas from '@/composables/canvas';
 const { onClickThumbnail } = useCanvas();
+
+const menu = ref();
+const selectedId = ref(0);
+const items = ref([
+  { command: () => {
+    emits('remove', selectedId.value);
+  }, label: '削除' }
+]);
+
+const onRightClick = (event: Event, id: number) => {
+  selectedId.value = id;
+  menu.value.show(event);
+};
 
 </script>
 
@@ -13,20 +34,28 @@ const { onClickThumbnail } = useCanvas();
     <div class="wrap">
       <div class="Thumbnail">
         <div
-          v-for="item, i in files"
+          v-for="item, i in filesStore.files"
           :key="i"
           class="item"
           :class="{ active: i == activeStore.active }"
-          @click="() => onClickThumbnail(i)"
+          @mouseover="() => onClickThumbnail(i)"
         >
-          <img :src="item">
+          <img
+            aria-haspopup="true"
+            :src="item"
+            @contextmenu="(e) => onRightClick(e, i)"
+          >
         </div>
+        <ContextMenu
+          ref="menu"
+          :model="items"
+        />
       </div>
     </div>
     <div  class="wrap">
       <div class="Main">
         <div class="item">
-          <img :src="files[activeStore.active]">
+          <img :src="filesStore.files[activeStore.active]">
         </div>
       </div>
     </div>
@@ -62,4 +91,5 @@ const { onClickThumbnail } = useCanvas();
   }
 }
 }
+
 </style>

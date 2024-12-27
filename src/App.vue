@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useDrop } from '@/composables/drop';
 import { onKeyArrow } from '@/composables/keyEvent';
-const { onDrop, onChange } = useDrop();
+const { onDrop, onChange, remove } = useDrop();
 import { useFilesStore } from '@/stores/Default';
-const { files } = useFilesStore();
+const filesStore = useFilesStore();
 
 import CanvasArea from '@/components/CanvasArea.vue';
 import DropArea from '@/components/DropArea.vue';
@@ -51,10 +51,11 @@ const handleKeyArrow = (event: KeyboardEvent) => {
       @keyup="handleKeyArrow"
     >
       <CanvasArea
-        v-if="files.length > 0"
+        v-if="filesStore.files.length > 0"
+        @remove="(e) => remove(e)"
       />
       <DropArea
-        v-if="files.length === 0"
+        v-if="filesStore.files.length === 0"
         @onChange="(e) => onChange(e)"
       />
     </main>

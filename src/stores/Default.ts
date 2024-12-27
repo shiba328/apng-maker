@@ -2,7 +2,16 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 // drop or input された画像群
-export const useFilesStore = defineStore('files', () => ({ files: ref([] as string[]) }));
+export const useFilesStore = defineStore('files', () => {
+  const files = ref<string[]>([]);
+
+  // files 配列を更新するメソッド
+  const setFiles = (newFiles: string[]) => {
+    files.value = newFiles;
+  };
+
+  return { files, setFiles };
+});
 
 // activeな画像のサムネイルindex番号
 export const useActiveStore = defineStore('active', () => {
@@ -11,7 +20,6 @@ export const useActiveStore = defineStore('active', () => {
 
   // 状態を変更するメソッド
   const setActive = (value: number) => {
-    console.log('setActive', value);
     active.value = value;
   };
 
