@@ -1,18 +1,1 @@
 @import './base.css';
-
-.p-contextmenu {
-  min-width: 80px !important; /* 任意の幅 */
-}
-
-.p-contextmenu-item-label {
-  font-size: 12px;
-}
-
-.p-contextmenu-root-list {
-  background: #fff;
-  border-radius: 4px;
-  filter: drop-shadow(2px 4px 6px rgba(0 , 0,0,0.3));
-}
-.p-contextmenu-item {
-  padding: 8px 12px;
-}

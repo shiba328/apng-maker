@@ -1,39 +1,16 @@
-# vue-project
+# APNG Miaker
 
-This template should help get you started developing with Vue 3 in Vite.
+## Use
 
-## Recommended IDE Setup
+### 画像の追加
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+(For PC)
+ドロップエリアに画像をドロップする(複数枚可能)
 
-## Type Support for `.vue` Imports in TS
+(For Mobile)
+ドロップエリア内のボタンをクリックして写真ロールを開き、画像を選択。(複数枚可能)
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+### 画像の削除
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
+(For PC)(For Mobile)
+サムネイル(画像一覧)で画像を長押し

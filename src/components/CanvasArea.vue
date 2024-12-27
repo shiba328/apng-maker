@@ -4,7 +4,6 @@ interface Emits {
 }
 
 const emits = defineEmits<Emits>();
-import ContextMenu from 'primevue/contextmenu';
 import {ref } from 'vue';
 
 import { useActiveStore, useFilesStore } from '@/stores/Default';
@@ -14,17 +13,19 @@ const activeStore = useActiveStore();
 import useCanvas from '@/composables/canvas';
 const { onClickThumbnail } = useCanvas();
 
-const menu = ref();
-const selectedId = ref(0);
-const items = ref([
-  { command: () => {
-    emits('remove', selectedId.value);
-  }, label: '削除' }
-]);
+const longPressTimeout = ref(0); // 長押しタイマー
 
-const onRightClick = (event: Event, id: number) => {
-  selectedId.value = id;
-  menu.value.show(event);
+// 長押しを開始
+const startPress = (index: number) => {
+  longPressTimeout.value = setTimeout(() => {
+    // 長押し完了時にアイテムを削除
+    emits('remove', index);
+  }, 800); // 長押しと判定する時間 (ms)
+};
+
+// 長押しをキャンセル
+const cancelPress = () => {
+  clearTimeout(longPressTimeout.value);
 };
 
 </script>
@@ -38,18 +39,19 @@ const onRightClick = (event: Event, id: number) => {
           :key="i"
           class="item"
           :class="{ active: i == activeStore.active }"
-          @mouseover="() => onClickThumbnail(i)"
+          @mousedown="startPress(i)"
+          @mouseleave="cancelPress"
+          @mouseover="onClickThumbnail(i)"
+          @mouseup="cancelPress"
+          @touchend="cancelPress"
+          @touchstart="startPress(i)"
+          @touchstart.prevent="onClickThumbnail(i)"
         >
           <img
             aria-haspopup="true"
             :src="item"
-            @contextmenu="(e) => onRightClick(e, i)"
           >
         </div>
-        <ContextMenu
-          ref="menu"
-          :model="items"
-        />
       </div>
     </div>
     <div  class="wrap">
