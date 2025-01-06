@@ -20,7 +20,7 @@ interface FcOptions {
 export default () => {
   // ファイルの管理
   const filesStore = useFilesStore();
-  const width = 1200; // 動画の横幅
+  const width = 320; // 動画の横幅
   let height = 0; // 動画の高さ（入力ストリームに基づいて計算）
   let streaming = false; // ストリーミング状態を管理
 
@@ -53,8 +53,8 @@ export default () => {
 
   const onClickUpFC = () => {
     console.log('onClickUpFC');
-    navigator.mediaDevices
-      .getUserMedia({ audio: false, video: true })
+    const media = navigator.mediaDevices
+      .getUserMedia({ audio: false, video: { facingMode: 'environment' }})
       .then((stream) => {
         fcVideo.value.srcObject = stream;
         fcVideo.value.play();

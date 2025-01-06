@@ -94,6 +94,9 @@ const handleKeyArrow = (event: KeyboardEvent) => {
         <video
           id="video"
           ref="fcVideo"
+          autoplay
+          muted
+          playsinline
         >
           Video stream not available.
         </video>
