@@ -246,5 +246,5 @@ export default () => {
     return new Blob([arrayBuffer], { type: mimeString });
   }
 
-  return { fcCanvas, fcOptions, fcPhoto, fcVideo, onClickTakeFC, onClickUpFC };
+  return { fcCanvas, fcOptions, fcOptionsSettings, fcPhoto, fcVideo, onClickTakeFC, onClickUpFC };
 };
