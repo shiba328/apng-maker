@@ -1,4 +1,4 @@
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 
 import { useFilesStore } from '@/stores/Default';
 
@@ -20,7 +20,7 @@ interface FcOptions {
 export default () => {
   // ファイルの管理
   const filesStore = useFilesStore();
-  const width = 320; // 動画の横幅
+  const width = window.innerWidth; // 画面幅を動的に取
   let height = 0; // 動画の高さ（入力ストリームに基づいて計算）
   let streaming = false; // ストリーミング状態を管理
 
@@ -53,7 +53,7 @@ export default () => {
 
   const onClickUpFC = () => {
     console.log('onClickUpFC');
-    const media = navigator.mediaDevices
+    navigator.mediaDevices
       .getUserMedia({ audio: false, video: { facingMode: 'environment' }})
       .then((stream) => {
         fcVideo.value.srcObject = stream;
@@ -70,10 +70,7 @@ export default () => {
           height = fcVideo.value.videoHeight / (fcVideo.value.videoWidth / width);
           if (isNaN(height)) height = width / (4 / 3);
 
-          fcVideo.value.setAttribute('width', width);
-          fcVideo.value.setAttribute('height', height);
-          fcCanvas.value.setAttribute('width', width);
-          fcCanvas.value.setAttribute('height', height);
+          updateVideoDimensions(); // 動画の幅と高さを更新
           streaming = true;
 
           drawVideoFrame();
@@ -88,7 +85,7 @@ export default () => {
       const x = 10;
       const y = 50;
       context.fillStyle = 'black';
-      context.font = '12px Arial';
+      context.font = '8px Arial';
       context.textAlign = 'left';
       context.textBaseline = 'top';
 
@@ -135,7 +132,7 @@ export default () => {
 
     if (fcOptions.showGridNumbers) {
       context.fillStyle = 'black';
-      context.font = `${Math.min(cellSize / 3, 12)}px Arial`;
+      context.font = '8px Arial';
       context.textAlign = 'left';
       context.textBaseline = 'top';
 
@@ -163,9 +160,9 @@ export default () => {
   const drawVideoFrame = () => {
     const context = fcCanvas.value.getContext('2d');
     if (streaming) {
-      context.drawImage(fcVideo.value, 0, 0, width, height);
+      context.drawImage(fcVideo.value, 0, 0, window.innerWidth, height);
 
-      const size = Math.min(width, height);
+      const size = Math.min(window.innerWidth, height);
 
       if (fcOptions.showSquare) drawSquare(context, size);
       if (fcOptions.showDiagonals) drawDiagonals(context, size);
@@ -225,7 +222,7 @@ export default () => {
       // 描写後の画像をBlobに変換
       const afterBlob = dataURLToBlob(afterDataURL);
       const afterFile = new File([afterBlob], 'after_canvas_image.png', { type: 'image/png' });
-      filesStore.setFiles(getFiles([beforeFile, afterFile]));
+      filesStore.files.push(...getFiles([beforeFile, afterFile]));
 
     }
   }
@@ -246,6 +243,20 @@ export default () => {
 
     return new Blob([arrayBuffer], { type: mimeString });
   }
+
+  // 動画の幅をデバイスの画面幅に設定
+  const updateVideoDimensions = () => {
+    const width = window.innerWidth; // 画面の最大幅に設定
+    height = fcVideo.value.videoHeight / fcVideo.value.videoWidth * width; // 高さを縦横比に基づいて計算
+
+    fcVideo.value.setAttribute('width', width.toString());
+    fcVideo.value.setAttribute('height', height.toString());
+    fcCanvas.value.setAttribute('width', width.toString());
+    fcCanvas.value.setAttribute('height', height.toString());
+  };
+  onMounted(() => {
+    window.addEventListener('resize', updateVideoDimensions); // ウィンドウサイズ変更時にも動画の幅を再計算
+  });
 
   return { fcCanvas, fcOptions, fcOptionsSettings, fcPhoto, fcVideo, onClickTakeFC, onClickUpFC };
 };
