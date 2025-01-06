@@ -12,6 +12,7 @@ interface FcOptions {
   showGridNumbers: boolean;
   showOptions: boolean;
   showSquare: boolean;
+  [key: string]: boolean | number; // 文字列インデックスを追加
 }
 
 // fcOptionsの型を指定
