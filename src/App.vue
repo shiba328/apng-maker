@@ -1,6 +1,17 @@
 <script setup lang="ts">
 import { useDrop } from '@/composables/drop';
+import useframeCamera from '@/composables/frameCamera';
 import { onKeyArrow } from '@/composables/keyEvent';
+
+const {
+  fcCanvas,
+  fcVideo,
+  fcPhoto,
+  fcOptions,
+  fcOptionsSettings,
+  onClickTakeFC,
+  onClickUpFC
+} = useframeCamera();
 const { onDrop, onChange, remove } = useDrop();
 import { useFilesStore } from '@/stores/Default';
 const filesStore = useFilesStore();
@@ -31,7 +42,7 @@ const handleKeyArrow = (event: KeyboardEvent) => {
     <GHeader />
     <div>
       <div>
-        画像追加
+        画像追加・撮影
         <input
           id="select"
           accept="image/*"
@@ -40,6 +51,66 @@ const handleKeyArrow = (event: KeyboardEvent) => {
           @change="(e) => onChange(e)"
         >
       </div>
+      <div>
+        フレームカメラ
+        <div @click="onClickUpFC">
+          起動
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="options">
+        <div
+          v-for="setting, i in fcOptionsSettings"
+          :key="i"
+        >
+          <div>
+            {{ setting.label }}
+          </div>
+          <div>
+            <div
+              v-if="setting.type == 'switch'"
+              class="switch"
+            >
+              <input
+                v-model="fcOptions[setting.key]"
+                switch
+                type="checkbox"
+              />
+            </div>
+            <input
+              v-else
+              v-model="fcOptions[setting.key]"
+              :type="setting.type"
+            >
+          </div>
+        </div>
+
+      </div>
+      <div
+        class="camera"
+        style="display: none"
+      >
+        <video
+          id="video"
+          ref="fcVideo"
+        >
+          Video stream not available.
+        </video>
+        <img
+          ref="fcPhoto"
+        >
+      </div>
+      <div @click="onClickTakeFC">
+        Take photo
+      </div>
+    </div>
+    <div>
+      <canvas
+        id="canvas"
+        ref="fcCanvas"
+      >
+      </canvas>
     </div>
     <main
       class="main"

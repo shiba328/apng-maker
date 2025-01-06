@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
 interface Emits {
   (e: 'remove', v: number): void;
 }
 
 const emits = defineEmits<Emits>();
-import {ref } from 'vue';
 
 import { useActiveStore, useFilesStore } from '@/stores/Default';
 const filesStore = useFilesStore();
@@ -13,19 +14,12 @@ const activeStore = useActiveStore();
 import useCanvas from '@/composables/canvas';
 const { onClickThumbnail } = useCanvas();
 
-const longPressTimeout = ref(0); // 長押しタイマー
+const draggedIndex = ref();
 
-// 長押しを開始
-const startPress = (index: number) => {
-  longPressTimeout.value = setTimeout(() => {
-    // 長押し完了時にアイテムを削除
-    emits('remove', index);
-  }, 800); // 長押しと判定する時間 (ms)
-};
-
-// 長押しをキャンセル
-const cancelPress = () => {
-  clearTimeout(longPressTimeout.value);
+// 削除
+const dropTrash = () => {
+  // 長押し完了時にアイテムを削除
+  emits('remove', draggedIndex.value);
 };
 
 </script>
@@ -39,19 +33,21 @@ const cancelPress = () => {
           :key="i"
           class="item"
           :class="{ active: i == activeStore.active }"
-          @mousedown="startPress(i)"
-          @mouseleave="cancelPress"
+          draggable
+          @dragstart="() => draggedIndex = i"
           @mouseover="onClickThumbnail(i)"
-          @mouseup="cancelPress"
-          @touchend="cancelPress"
-          @touchstart="startPress(i)"
           @touchstart.prevent="onClickThumbnail(i)"
         >
           <img
-            aria-haspopup="true"
             :src="item"
           >
         </div>
+      </div>
+      <div
+        class="trash"
+        @drop="dropTrash"
+      >
+        trash
       </div>
     </div>
     <div  class="wrap">
@@ -69,22 +65,29 @@ const cancelPress = () => {
 .canvas {
   width: 100%;
   max-height: var(--canvas-h);
-
-  display: grid;
-  grid-template-columns: 100px auto;
-}
-.Main {
-  .item {
+  display: flex;
+  .wrap {
     height: var(--canvas-h);
   }
+  .wrap:first-child {
+    flex-basis: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
 }
-
+.trash {
+  height: 100px ;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #eee;
+}
 .Thumbnail {
   display: flex;
   flex-direction: column;
   gap: 8px;
   overflow-y: scroll;
-  height: var(--canvas-h);
   .item {
   border: 1px solid transparent;
   &.active {
@@ -92,6 +95,11 @@ const cancelPress = () => {
     border: 1px solid #000;
   }
 }
+}
+.Main {
+  .item {
+    height: var(--canvas-h);
+  }
 }
 
 </style>
