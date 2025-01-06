@@ -2,6 +2,20 @@ import { reactive, ref } from 'vue';
 
 import { useFilesStore } from '@/stores/Default';
 
+// 型定義
+interface FcOptions {
+  circleDivisions: number;
+  gridDivisions: number;
+  showCircles: boolean;
+  showDiagonals: boolean;
+  showGrid: boolean;
+  showGridNumbers: boolean;
+  showOptions: boolean;
+  showSquare: boolean;
+}
+
+// fcOptionsの型を指定
+
 export default () => {
   // ファイルの管理
   const filesStore = useFilesStore();
@@ -14,7 +28,7 @@ export default () => {
   const fcPhoto = ref();
 
   // 描画オプション
-  const fcOptions = reactive({
+  const fcOptions: FcOptions = reactive({
     circleDivisions: 3,
     gridDivisions: 6,
     showCircles: true,
@@ -22,7 +36,7 @@ export default () => {
     showGrid: true,
     showGridNumbers: true,
     showOptions: true,
-    showSquare: true // fcOptionsを表示するかどうか
+    showSquare: true
   });
 
   const fcOptionsSettings = [
@@ -68,7 +82,7 @@ export default () => {
     );
   };
 
-  const drawOptions = (context) => {
+  const drawOptions = (context: CanvasRenderingContext2D) => {
     if (fcOptions.showOptions) {
       const x = 10;
       const y = 50;
@@ -84,13 +98,13 @@ export default () => {
     }
   };
 
-  const drawSquare = (context, size) => {
+  const drawSquare = (context: CanvasRenderingContext2D, size: number) => {
     context.strokeStyle = 'red';
     context.lineWidth = 1;
     context.strokeRect((width - size) / 2, (height - size) / 2, size, size);
   };
 
-  const drawDiagonals = (context, size) => {
+  const drawDiagonals = (context: CanvasRenderingContext2D, size: number) => {
     context.strokeStyle = 'blue';
     context.lineWidth = 1;
     context.beginPath();
@@ -101,7 +115,7 @@ export default () => {
     context.stroke();
   };
 
-  const drawGrid = (context, size, divisions) => {
+  const drawGrid = (context: CanvasRenderingContext2D, size: number, divisions: number) => {
     context.strokeStyle = 'green';
     context.lineWidth = 1;
     const cellSize = size / divisions;
@@ -135,7 +149,7 @@ export default () => {
     }
   };
 
-  const drawCircles = (context, size, divisions) => {
+  const drawCircles = (context: CanvasRenderingContext2D, size: number, divisions: number) => {
     context.strokeStyle = 'purple';
     context.lineWidth = 1;
     for (let i = 1; i <= divisions; i++) {
@@ -210,13 +224,16 @@ export default () => {
       // 描写後の画像をBlobに変換
       const afterBlob = dataURLToBlob(afterDataURL);
       const afterFile = new File([afterBlob], 'after_canvas_image.png', { type: 'image/png' });
+      filesStore.setFiles(getFiles([beforeFile, afterFile]));
 
-      filesStore.setFiles([beforeFile, afterFile]);
     }
   }
 
+  // propされたファイルをURLに変換
+  const getFiles = (files:File[]): string[] => files.map(file => URL.createObjectURL(file));
+
   // base64をBlobに変換する関数
-  function dataURLToBlob(dataURL) {
+  function dataURLToBlob(dataURL: string) {
     const byteString = atob(dataURL.split(',')[1]);
     const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
 
