@@ -45,7 +45,7 @@ const dropTrash = () => {
       </div>
       <div
         class="trash"
-        @drop="dropTrash"
+        @drop.stop="dropTrash"
       >
         trash
       </div>
