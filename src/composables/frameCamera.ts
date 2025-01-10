@@ -23,6 +23,7 @@ export default () => {
   const width = window.innerWidth; // 画面幅を動的に取
   let height = 0; // 動画の高さ（入力ストリームに基づいて計算）
   let streaming = false; // ストリーミング状態を管理
+  const isDialog = ref(false); // 設定や撮影時のストリーム画面用のDialog
 
   const fcVideo = ref();
   const fcCanvas = ref();
@@ -46,8 +47,8 @@ export default () => {
     { key: 'showCircles', label: '円の表示', type: 'switch' },
     { key: 'showDiagonals', label: '対角線の表示', type: 'switch' },
     { key: 'showGrid', label: 'グリッドの表示', type: 'switch' },
-    { key: 'showSquare', label: '正方形の表示', type: 'switch' },
     { key: 'showGridNumbers', label: 'グリッド番号の表示', type: 'switch' },
+    { key: 'showSquare', label: '正方形の表示', type: 'switch' },
     { key: 'showOptions', label: '設定の表示', type: 'switch' }
   ];
 
@@ -58,6 +59,8 @@ export default () => {
       .then((stream) => {
         fcVideo.value.srcObject = stream;
         fcVideo.value.play();
+        // Dialogの起動
+        toggleDialog(true);
       })
       .catch((error) => {
         console.error(`An error occurred: ${error}`);
@@ -180,6 +183,11 @@ export default () => {
     takepicture();
   };
 
+  const toggleDialog = (v: boolean) => {
+    console.log('toggleDialog', v);
+    isDialog.value = v;
+  };
+
   function clearphoto() {
     const context = fcCanvas.value.getContext('2d');
     context.fillStyle = '#AAA';
@@ -258,5 +266,5 @@ export default () => {
     window.addEventListener('resize', updateVideoDimensions); // ウィンドウサイズ変更時にも動画の幅を再計算
   });
 
-  return { fcCanvas, fcOptions, fcOptionsSettings, fcPhoto, fcVideo, onClickTakeFC, onClickUpFC };
+  return { fcCanvas, fcOptions, fcOptionsSettings, fcPhoto, fcVideo, isDialog, onClickTakeFC, onClickUpFC };
 };
